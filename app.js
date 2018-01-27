@@ -8,9 +8,9 @@ var fs = require('fs');
 var app = express();
 
 var httpsOptions = {
-  key: fs.readFileSync('/home/cert/task-scheduler.tk/privkey.pem'),
-  cert: fs.readFileSync('/home/cert/task-scheduler.tk/cert.pem'),
-  ca: fs.readFileSync('/home/cert/task-scheduler.tk/chain.pem')
+  key: fs.readFileSync('./certs/privkey.pem'),
+  cert: fs.readFileSync('./certs/cert.pem'),
+  ca: fs.readFileSync('./certs/chain.pem')
 };
 
 //for site
