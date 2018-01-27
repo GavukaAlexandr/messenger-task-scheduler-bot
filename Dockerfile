@@ -1,5 +1,5 @@
 FROM node:carbon-alpine
-COPY /etc/letsencrypt/live/task-scheduler.tk/ /home/cert/task-scheduler.tk/
+COPY /etc/letsencrypt/live/task-scheduler.tk /home/cert/task-scheduler.tk/
 WORKDIR /home/www/
 COPY . /home/www/
 RUN npm install
