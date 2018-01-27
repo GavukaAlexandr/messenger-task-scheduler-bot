@@ -1,5 +1,5 @@
 FROM node:carbon-alpine
-# VOLUME [ "/home/www/" ]
+VOLUME [ "/home/cert/task-scheduler.tk" ]
 WORKDIR /home/www/
 COPY . /home/www/
 RUN npm install
