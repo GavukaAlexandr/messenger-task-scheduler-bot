@@ -4,8 +4,8 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    volumes:
-      - "/home/cert/task-scheduler.tk:/home/cert/task-scheduler.tk/"
+    # volumes:
+      # - "/home/cert/task-scheduler.tk:/home/cert/task-scheduler.tk/"
     ports:
       - "80:3000"
       # - "8080:8080"
