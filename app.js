@@ -1,17 +1,32 @@
-var express = require('express');
-var express = require('express');
-var bodyParser = require('body-parser');
-var path = require('path');
-var https = require('https'); 
-var fs = require('fs');
+import express from "express";
+import bodyParser from "body-parser";
+import path from "path";
+import https from 'https';
+import fs from 'fs';
+import forceSsl from 'express-force-ssl';
 
-var app = express();
+const app = express();
+app.use(forceSsl);
 
-var httpsOptions = {
-  key: fs.readFileSync('./certs/privkey.pem'),
-  cert: fs.readFileSync('./certs/cert.pem'),
-  ca: fs.readFileSync('./certs/chain.pem')
+const httpsOptions = {
+  key: fs.readFileSync(path.resolve('./certs/privkey1.pem')),
+  cert: fs.readFileSync(path.resolve('./certs/cert1.pem')),
+  ca: fs.readFileSync(path.resolve('./certs/chain1.pem'))
 };
+
+app.get('/', function (req, res) {
+  res.send("Hello World!");
+});
+
+app.listen(3000, "0.0.0.0", err => {
+  if (err) return console.log(err);
+  console.log("HTTP server started");
+});
+
+https.createServer(httpsOptions, app).listen(8000, "0.0.0.0", err => {
+  if (err) return console.log(err);
+  console.log("HTTPS server started");
+});
 
 //for site
 app.use(express.static(__dirname + "./public"));
@@ -19,22 +34,61 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 //for site
 
-app.get("/*", (req, res) => {
+app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "./public/index.html"));
 });
 
+// Creates the endpoint for our webhook 
+app.post('/webhook', (req, res) => {  
+ 
+  let body = req.body;
 
-https.createServer(httpsOptions, function (req, res) {
-  res.writeHead(200);
-  res.end("hello world\n");
-}).listen(8000);
+  // Checks this is an event from a page subscription
+  if (body.object === 'page') {
 
+    // Iterates over each entry - there may be multiple if batched
+    body.entry.forEach(function(entry) {
 
+      // Gets the message. entry.messaging is an array, but 
+      // will only ever contain one message, so we get index 0
+      let webhook_event = entry.messaging[0];
+      console.log(webhook_event);
+    });
 
+    // Returns a '200 OK' response to all requests
+    res.status(200).send('EVENT_RECEIVED');
+  } else {
+    // Returns a '404 Not Found' if event is not from a page subscription
+    res.sendStatus(404);
+  }
 
+});
+ 
+// Adds support for GET requests to our webhook
+app.get('/webhook', (req, res) => {
+  console.log(req);
 
-
-app.listen(3000, err => {
-    if (err) return console.log(err);
-    console.log("server started");
-  });
+  // Your verify token. Should be a random string.
+  let VERIFY_TOKEN = "<YOUR_VERIFY_TOKEN>"
+    
+  // Parse the query params
+  let mode = req.query['hub.mode'];
+  let token = req.query['hub.verify_token'];
+  let challenge = req.query['hub.challenge'];
+    
+  // Checks if a token and mode is in the query string of the request
+  if (mode && token) {
+  
+    // Checks the mode and token sent is correct
+    if (mode === 'subscribe' && token === VERIFY_TOKEN) {
+      
+      // Responds with the challenge token from the request
+      console.log('WEBHOOK_VERIFIED');
+      res.status(200).send(challenge);
+    
+    } else {
+      // Responds with '403 Forbidden' if verify tokens do not match
+      res.sendStatus(403);      
+    }
+  }
+});

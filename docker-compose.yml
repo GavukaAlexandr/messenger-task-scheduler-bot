@@ -1,14 +1,15 @@
-version: '2'
+version: '3.4'
 services:
   web:
     build:
       context: ./
       dockerfile: Dockerfile
-    # volumes:
-      # - "/home/cert/task-scheduler.tk:/home/cert/task-scheduler.tk/"
+    volumes:
+           - ".:/home/www/messenger-task-scheduler-bot"
     ports:
       - "80:3000"
-      # - "8080:8080"
+      - "443:8000"
+      - "1337:8000"
     # depends_on:
       # - mongo
     # автоперезагрузка сервиса если возникнет ошибка і автозагрузка із системою

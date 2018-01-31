@@ -1,9 +1,10 @@
 {
   "name": "messenger-task-scheduler-bot",
   "version": "1.0.0",
-  "description": "",
+  "description": "messenger task-scheduler bot with api.ai",
   "main": "app.js",
   "scripts": {
+    "start": "node_modules/.bin/babel-watch --presets es2015,stage-2 app.js --source-maps ----inspect",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -21,5 +22,12 @@
     "express": "^4.16.2",
     "express-force-ssl": "^0.3.2",
     "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "babel-watch": "^2.0.7"
   }
 }
