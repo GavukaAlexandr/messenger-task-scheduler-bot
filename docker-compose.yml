@@ -10,13 +10,13 @@ services:
       - "80:3000"
       - "443:8000"
       - "1337:8000"
-    # depends_on:
-      # - mongo
+    depends_on:
+      - mongo
     # автоперезагрузка сервиса если возникнет ошибка і автозагрузка із системою
     # restart: always
-  # mongo:
-  #   command: mongod
-  #   image: mongo:3-jessie
+  mongo:
+    command: mongod
+    image: mongo:3-jessie
     # ports:
       # - "27100:27017" # map port to none standard port, to avoid conflicts with locally installed mongodb.
 
@@ -26,8 +26,8 @@ services:
     # https://docs.docker.com/engine/reference/builder/#volume
     # https://docs.docker.com/engine/admin/volumes/volumes/
     # з ліва параметри для хосту, з права для контейнера
-    # volumes:
-    #   - ./../database/mongo/db:/data/db
-    #   - ./../database/mongo/configDb:/data/configdb
+    volumes:
+      - ./../database/mongo/db:/data/db
+      - ./../database/mongo/configDb:/data/configdb
     # автоперезагрузка сервиса если возникнет ошибка і автозагрузка із системою
     # restart: always

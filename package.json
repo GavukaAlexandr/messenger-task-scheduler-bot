@@ -18,9 +18,12 @@
   },
   "homepage": "https://github.com/GavukaAlexandr/messenger-task-scheduler-bot#readme",
   "dependencies": {
+    "apiai": "^4.0.3",
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
     "express-force-ssl": "^0.3.2",
+    "messaging-api-messenger": "^0.6.9",
+    "mongoose": "^5.0.3",
     "path": "^0.12.7"
   },
   "devDependencies": {
