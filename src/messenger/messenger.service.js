@@ -1,8 +1,6 @@
-import {
-  MessengerClient
-} from "messaging-api-messenger";
+import { MessengerClient } from "messaging-api-messenger";
 import apiai from "apiai";
-import ReminderService from './reminder.services';
+import ReminderService from './../remind/reminder.services';
 
 //token for DialogFlow API
 const apiaiApp = apiai("dfa845929dfc44ada42bb9a3c3962653");
@@ -17,26 +15,32 @@ const client = MessengerClient.connect(accessToken);
 
 class MessengerService {
   handleEvents(webhook_event) {
-    console.log(webhook_event);
+    // console.log(webhook_event);
     if (webhook_event.message) {
       let request = apiaiApp.textRequest(webhook_event.message.text, {
         sessionId: webhook_event.sender.id
-
       });
-
+      
       request.on("response", function (response) {
-        // console.log(response);
+        console.log(response);
+        // this.handlePrompts(response);
 
-        // console.log(new Date(response.result.parameters.date + " " + response.result.parameters.time))
-        ReminderService.create({
+        if (response.result.parameters.date && response.result.parameters.time) {
+          // function for create reminder and send response to messenger
+          ReminderService.create({
           reminderDate: new Date(response.result.parameters.date + " " + response.result.parameters.time),
           userId: webhook_event.sender.id,
           task: response.result.resolvedQuery,
         }, (err, createdReminder) => {
-          if (err) return next(err);
-
-          console.log(createdReminder);
+          if (err) return console.log(err);
         });
+
+        this.sendTextMessage(response.result.fulfillment.speech, response.sessionId);
+
+        } else {
+          // send ask to messenger
+          handlePrompts(dataFromMessenger);
+        }
       });
 
       request.on("error", function (error) {
@@ -44,10 +48,6 @@ class MessengerService {
       });
 
       request.end();
-
-      //TODO: create connect to db****
-      //TODO: create model "Reminder"
-      //TODO: set reminder to DB
 
 
 
@@ -113,7 +113,7 @@ class MessengerService {
 
   handlePrompts(request) {
     // send request to DialogFlow
-    if ((task, date, time)) {
+    if (response.result.parameters.date &&response.result.parameters.time) {
       // function for create reminder and send response to messenger
     } else {
       // send ask to messenger
@@ -121,10 +121,10 @@ class MessengerService {
     }
   }
 
-  sendTextMessage(message) {
+  sendTextMessage(message, recipientId) {
     client.sendRawBody({
       recipient: {
-        id: 1588954187852564
+        id: recipientId
       },
       message: {
         text: message
